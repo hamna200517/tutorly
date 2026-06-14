@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginRequest, meRequest, resendVerificationRequest } from "../../api/auth";
+import { loginRequest, meRequest } from "../../api/auth";
 import useAuthStore from "../../store/authStore";
 import { getDashboardPathByRole } from "../../utils/roleRedirect";
 
@@ -11,9 +11,7 @@ export default function LoginPage() {
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [resending, setResending] = useState(false);
 
   const onChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -22,9 +20,7 @@ export default function LoginPage() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setInfo("");
     setLoading(true);
-
     try {
       const loginData = await loginRequest({
         email: form.email.trim(),
@@ -56,26 +52,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleResendVerification = async () => {
-    if (!form.email.trim()) {
-      setError("Enter your email first, then resend verification.");
-      return;
-    }
-
-    setError("");
-    setInfo("");
-    setResending(true);
-
-    try {
-      const data = await resendVerificationRequest(form.email.trim());
-      setInfo(data?.message || "Verification email sent.");
-    } catch (err) {
-      setError(err?.response?.data?.error?.message || "Could not resend verification email.");
-    } finally {
-      setResending(false);
-    }
-  };
-
   return (
     <main className="page-wrap">
       <section className="card">
@@ -90,33 +66,21 @@ export default function LoginPage() {
 
           <div>
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={onChange}
-              required
-            />
+            <input id="password" name="password" type="password" value={form.password} onChange={onChange} required />
           </div>
 
           <button className="btn-primary" type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
 
-          <button className="btn-secondary" type="button" onClick={handleResendVerification} disabled={resending}>
-            {resending ? "Sending verification..." : "Resend verification email"}
-          </button>
-
           {error ? <p className="error">{error}</p> : null}
-          {info ? <p className="success">{info}</p> : null}
         </form>
 
         <div className="row" style={{ marginTop: "14px" }}>
           <Link to="/register">Create account</Link>
-          <Link to="/forgot-password">Forgot password?</Link>
         </div>
       </section>
     </main>
   );
 }
+
