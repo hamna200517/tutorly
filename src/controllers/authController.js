@@ -415,6 +415,7 @@ exports.forgotPassword = async (req, res) => {
     try {
       await sendPasswordResetEmail(email, resetLink);
     } catch (mailErr) {
+      throw new HttpError(500, "EMAIL_ERROR", "Failed to send reset email. Please check server email configuration.");
     }
   }
 
