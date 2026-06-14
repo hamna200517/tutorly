@@ -1,0 +1,57 @@
+TUTORLY - LOCAL SETUP GUIDE
+============================
+
+STEP 1: Create the database
+-----------------------------
+  psql postgres -c "CREATE DATABASE tutorly;"
+
+STEP 2: Load schema + seed
+----------------------------
+  psql tutorly < docs/database/full_schema_and_migrations.sql
+  psql tutorly < docs/database/seed.sql
+
+STEP 3: Configure .env
+------------------------
+  Open .env and set:
+  - DATABASE_URL: replace hamnahassan with your Mac username (run: whoami)
+  - EMAIL_USER: your Gmail address (for password reset emails)
+  - EMAIL_PASS: your Gmail App Password (NOT your real Gmail password)
+
+  To get Gmail App Password:
+  1. Go to myaccount.google.com > Security
+  2. Enable 2-Step Verification
+  3. Search "App passwords" > create one for "Mail"
+  4. Paste the 16-character code into EMAIL_PASS
+
+STEP 4: Create admin account
+------------------------------
+  Register normally via the app at http://localhost:5173/register (use any email)
+  Then run this in terminal to promote to admin:
+
+  psql tutorly -c "UPDATE accounts SET role='admin' WHERE email='your@email.com';"
+  psql tutorly -c "INSERT INTO admins (account_id, name) SELECT account_id, 'Admin' FROM accounts WHERE email='your@email.com';"
+
+STEP 5: Run backend
+--------------------
+  npm install       (first time only)
+  npm run dev       -> http://localhost:4001
+
+STEP 6: Run frontend (new terminal tab)
+-----------------------------------------
+  cd phase3
+  npm install       (first time only)
+  npm run dev       -> http://localhost:5173
+
+WHY TUTORS/ACADEMIES DON'T SHOW IN DISCOVERY
+----------------------------------------------
+  By design - tutors and academies must buy a subscription FIRST
+  before they appear in student discovery. This is the business model.
+
+  Flow:
+  1. Register as tutor -> login -> go to Subscription page -> top up wallet -> buy plan
+  2. Now the tutor shows up when a student searches
+
+  Same for academy:
+  1. Register as academy -> login -> Subscription -> top up -> buy plan
+  2. Now academy shows up in student discovery
+
