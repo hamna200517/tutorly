@@ -23,14 +23,6 @@ STEP 3: Configure .env
   3. Search "App passwords" > create one for "Mail"
   4. Paste the 16-character code into EMAIL_PASS
 
-STEP 4: Create admin account
-------------------------------
-  Register normally via the app at http://localhost:5173/register (use any email)
-  Then run this in terminal to promote to admin:
-
-  psql tutorly -c "UPDATE accounts SET role='admin' WHERE email='your@email.com';"
-  psql tutorly -c "INSERT INTO admins (account_id, name) SELECT account_id, 'Admin' FROM accounts WHERE email='your@email.com';"
-
 STEP 5: Run backend
 --------------------
   npm install       (first time only)
