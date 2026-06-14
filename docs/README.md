@@ -1,10 +1,6 @@
-Group 39 - Tutorly
-
-Team Members:
-Group 39
 
 ## Project Overview
-Tutorly is an educational platform that connects students with tutors and academies. It supports role-based access for students, tutors, academies, and admins. The system addresses practical needs such as tutor discovery, academy course enrollment, wallet-based payments, booking management, withdrawals, chat, and review handling. Its main users include students looking for learning support, tutors offering educational services, academies managing courses and enrollments, and admins overseeing critical system operations.
+Tutorly is an educational platform that connects students with tutors and academies. It supports role-based access for students, tutors, academies,. The system addresses practical needs such as tutor discovery, academy course enrollment, wallet-based payments, booking management, withdrawals, chat, and review handling. Its main users include students looking for learning support, tutors offering educational services, academies managing courses and enrollments, and overseeing critical system operations.
 
 ## Tech Stack
 
@@ -63,10 +59,6 @@ This page allows an academy to manage its course offerings by adding manual cour
 
 ![Academy Course Management](../media/screenshots/academy-courses.png)
 
-### 3. Admin Withdrawal Review
-This page allows the admin to view pending tutor withdrawal requests and either approve or reject them. It is important because it demonstrates the admin role, supports role-based access control, and shows a money-sensitive workflow where admin decisions directly affect withdrawal completion or tutor wallet refund behavior.
-
-![Admin Withdrawal Review](../media/screenshots/admin-withdrawl.png)
 
 ## Setup & Installation
 
@@ -182,7 +174,6 @@ To use the application properly, both servers must be running at the same time:
 - In Supabase Auth settings, make sure these redirect URLs are allowed:
   - `http://localhost:5173`
   - `http://localhost:5173/reset-password`
-- Admin accounts are not publicly registered through the frontend and must already exist in the backend database and authentication setup
 
 ## User Roles
 
@@ -200,7 +191,6 @@ To use the application properly, both servers must be running at the same time:
 - Submit app feedback
 
 **Cannot do:**
-- Access tutor-only, academy-only, or admin-only routes
 - Purchase tutor or academy subscriptions
 - Review withdrawal requests
 
@@ -228,7 +218,6 @@ However, the password values in `seed.sql` are placeholder hashes, not usable pl
 - Submit app feedback
 
 **Cannot do:**
-- Access student-only, academy-only, or admin-only routes
 - Enroll in academy courses
 - Approve withdrawals
 
@@ -255,7 +244,6 @@ Again, the password fields in `seed.sql` are placeholder hashes only. For actual
 - Submit app feedback
 
 **Cannot do:**
-- Access student-only, tutor-only, or admin-only routes
 - Request tutor withdrawals
 - Review payouts
 
@@ -267,32 +255,12 @@ Again, the password fields in `seed.sql` are placeholder hashes only. For actual
 
 As with other roles, matching auth users must exist for actual login testing.
 
----
 
-### Admin
-**Can do:**
-- Log in with an existing admin account
-- View pending withdrawal requests
-- Approve or reject withdrawals
-- View all app feedback
-- Reply to app feedback
-
-**Cannot do:**
-- Register publicly through the frontend
-- Use student, tutor, or academy-only workflows
-
-**Testing Accounts**
-`seed.sql` contains the admin email:
-- `admin@tutorly.pk`
-
-This role must already exist in both backend data and the authentication setup to be used through the frontend.
-
----
 
 ## Feature Walkthrough
 
 ### Authentication
-**Role(s):** Student, Tutor, Academy, Admin  
+**Role(s):** Student, Tutor, Academy  
 **What it does:** Supports registration, login, logout, password reset, email verification, and session restoration through `/auth/me`.  
 **Frontend pages:** `/login`, `/register`, `/forgot-password`, `/reset-password`  
 **API mapping:**  
@@ -341,14 +309,12 @@ This role must already exist in both backend data and the authentication setup t
 - `GET /api/v1/subscriptions/tutor/my`
 
 ### Tutor Withdrawal Flow
-**Role(s):** Tutor, Admin  
-**What it does:** Tutors request withdrawals from wallet funds, and admins approve or reject them. Rejected withdrawals refund the tutor wallet.  
-**Frontend pages:** `/tutor/withdrawals`, `/admin/withdrawals`  
+**Role(s):** Tutor
+**What it does:** Tutors request withdrawals from wallet funds, and approve or reject them. Rejected withdrawals refund the tutor wallet.  
+**Frontend pages:** `/tutor/withdrawals`
 **API mapping:**  
 - `POST /api/v1/withdrawals/request`
 - `GET /api/v1/withdrawals/my`
-- `GET /api/v1/withdrawals/admin/pending`
-- `PATCH /api/v1/withdrawals/admin/:withdrawalId/review`
 
 ### Academy Discovery and Enrollment
 **Role(s):** Student  
@@ -399,17 +365,15 @@ This role must already exist in both backend data and the authentication setup t
 - `GET /api/v1/reviews/my`
 
 ### App Feedback
-**Role(s):** Student, Tutor, Academy, Admin  
-**What it does:** Non-admin roles can submit platform feedback, while admins can read and reply to feedback messages.  
-**Frontend pages:** `/student/feedback`, `/tutor/feedback`, `/academy/feedback`, `/admin/feedback`  
+**Role(s):** Student, Tutor, Academy
+**What it does:**  roles can submit platform feedback
+**Frontend pages:** `/student/feedback`, `/tutor/feedback`, `/academy/feedback`  
 **API mapping:**  
 - `POST /api/v1/app-feedback`
 - `GET /api/v1/app-feedback/my`
-- `GET /api/v1/app-feedback/admin`
-- `PATCH /api/v1/app-feedback/admin/:feedbackId/reply`
 
 ### Analytics and Filtering
-**Role(s):** Student, Tutor, Academy, Admin  
+**Role(s):** Student, Tutor, Academy
 **What it does:** Dashboards show role-specific analytics charts, and discovery pages support advanced filtering for tutors and academies.  
 **Frontend pages:** dashboard pages and student discovery pages  
 **API mapping:**  
@@ -505,24 +469,6 @@ This role must already exist in both backend data and the authentication setup t
 **Relevant API endpoint:** `POST /api/v1/withdrawals/request`  
 **Relevant code:** `src/services/withdrawalService.js` → `requestTutorWithdrawal()`
 
-### 5. Admin Withdrawal Review
-**Trigger:** An admin approves or rejects a tutor withdrawal request.  
-**Atomic operations bundled together:**
-- lock withdrawal and wallet rows
-- validate request is still pending
-- if approved, mark withdrawal approved
-- if rejected, refund tutor wallet and mark request rejected
-- commit both changes together
-
-**Rollback causes:**
-- withdrawal already reviewed
-- invalid admin account
-- request not found
-- any database failure during status update or refund
-
-**Relevant API endpoint:** `PATCH /api/v1/withdrawals/admin/:withdrawalId/review`  
-**Relevant code:** `src/services/withdrawalService.js` → `reviewWithdrawal()`
-
 ### 6. Subscription Purchase
 **Trigger:** A tutor or academy purchases a subscription plan.  
 **Atomic operations bundled together:**
@@ -586,7 +532,7 @@ The project includes explicit indexing and performance testing in `performance.s
   Improves booking-to-payment joins.
 
 - `idx_withdrawal_status` on `withdrawal_requests(status)`  
-  Speeds up admin pending-withdrawal queue retrieval.
+  Speeds up pending-withdrawal queue retrieval.
 
 - `idx_withdrawal_wallet` on `withdrawal_requests(wallet_id)`  
   Improves joins between withdrawal requests and wallet records.
@@ -607,7 +553,7 @@ The project includes explicit indexing and performance testing in `performance.s
 `performance.sql` compares `EXPLAIN ANALYZE` results before and after indexing for these query groups:
 - tutor discovery with subject, city, and mode filters
 - student booking history with payment joins
-- admin pending withdrawal review queue
+- pending withdrawal review queue
 - student progress analytics
 
 In each case, indexing reduces scan cost and improves lookup efficiency by turning repeated full-table or wider join work into faster indexed access paths. The exact before/after execution times should be taken from the submitted `performance.sql` run output or screenshots.
@@ -644,8 +590,6 @@ The full API is documented in `swagger.yaml`. The table below is a quick-referen
 | POST | `/api/v1/sessions/bookings/:bookingId/confirm` | Yes (`student`, `tutor`) | Confirm or reject session outcome |
 | GET | `/api/v1/withdrawals/my` | Yes (`tutor`) | View tutor withdrawal history |
 | POST | `/api/v1/withdrawals/request` | Yes (`tutor`) | Request tutor withdrawal |
-| GET | `/api/v1/withdrawals/admin/pending` | Yes (`admin`) | View pending withdrawal requests |
-| PATCH | `/api/v1/withdrawals/admin/:withdrawalId/review` | Yes (`admin`) | Approve or reject withdrawal |
 | GET | `/api/v1/discovery/tutors` | Yes (`student`) | Search tutors with filters |
 | GET | `/api/v1/discovery/academies` | Yes (`student`) | Search academies with filters |
 | GET | `/api/v1/academies/list` | Yes (`student`) | List active academies |
@@ -663,14 +607,13 @@ The full API is documented in `swagger.yaml`. The table below is a quick-referen
 | GET | `/api/v1/reviews/my` | Yes (`student`, `tutor`) | View submitted or received reviews |
 | POST | `/api/v1/app-feedback` | Yes (`student`, `tutor`, `academy`) | Submit app feedback |
 | GET | `/api/v1/app-feedback/my` | Yes (`student`, `tutor`, `academy`) | View own submitted feedback |
-| GET | `/api/v1/app-feedback/admin` | Yes (`admin`) | View all app feedback |
-| PATCH | `/api/v1/app-feedback/admin/:feedbackId/reply` | Yes (`admin`) | Reply to feedback |
+
 
 ---
 
 ## Known Issues & Limitations
 
-- Public registration is only available for `student`, `tutor`, and `academy`. Admin accounts must already exist in the backend/auth setup.
+- Public registration is only available for `student`, `tutor`, and `academy`.x accounts must already exist in the backend/auth setup.
 - `seed.sql` contains sample role emails, but not usable plaintext passwords. For actual frontend login testing, matching Supabase auth users or newly registered frontend accounts are required.
 - Academy reviews are not implemented. Reviews currently support the student-to-tutor flow only.
 - Academy-teacher management exists partly in the database schema, but a complete academy-teacher management module is not implemented in the frontend.
