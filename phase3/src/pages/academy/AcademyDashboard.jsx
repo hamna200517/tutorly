@@ -56,9 +56,8 @@ export default function AcademyDashboard() {
           <p className="section-kicker">Quick Access</p>
           <h3>Current academy activity</h3>
           <ul className="feature-list">
-            <li>{history.length} subscription record(s) available</li>
-            <li>{enrollments.length} enrollment(s) currently tracked</li>
-            <li>Seed starter courses and monitor student interest</li>
+            <li>{history.length} subscriptions available</li>
+            <li>{enrollments.length} enrollments tracked</li>
             <li>Respond to students through academy chat</li>
           </ul>
         </article>

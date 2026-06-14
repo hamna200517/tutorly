@@ -14,8 +14,8 @@ export default function StudentDashboard() {
       accentLabel="Student"
       navItems={studentNavItems}
       quickStats={[
-        { label: "Bookings", value: String(bookingCount), note: "Session count tracked across student pages" },
-        { label: "Enrollments", value: String(enrollmentCount), note: "Academy course enrollments" },
+        { label: "Bookings", value: String(bookingCount), note: "Sessions booked" },
+        { label: "Enrollments", value: String(enrollmentCount), note: "Academy enrollments" },
         {
           label: "Wallet",
           value: walletBalance === null ? "Unavailable" : `PKR ${walletBalance}`,
@@ -28,7 +28,7 @@ export default function StudentDashboard() {
           <p className="section-kicker">Overview</p>
           <h3>Everything in one place</h3>
           <p className="muted">
-            Use this dashboard to keep track of bookings, wallet activity, academy enrollments, and your learning
+            Use this dashboard to keep track of bookings, wallet , enrollments, and your learning
             activity at a glance.
           </p>
         </article>
