@@ -5,8 +5,8 @@
 :root {
   --primary: #800020;
   --primary-dark: #5c0018;
-  --bg: #f5f5f5;
-  --bg-soft: #eeeeee;
+  --bg: ##591919;
+  --bg-soft: #3b0c0c;
   --border: #d0d0d0;
   --text: #1a0a0a;
   --text-soft: #4a4a4a;
@@ -15,7 +15,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f5f5;
+  background: ##591919;
   color: var(--text);
   min-height: 100vh;
 }
